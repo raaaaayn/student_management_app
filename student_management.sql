@@ -18,14 +18,13 @@ CREATE TABLE student_subject_info(
     usn VARCHAR(255) NOT NULL,
     department VARCHAR(255) NOT NULL,
     subject VARCHAR(255) NOT NULL,
-    sem INTEGER NOT NULL,
+    sem_id INTEGER NOT NULL,
     attendance VARCHAR(255) NOT NULL,
     max_marks INTEGER NOT NULL,
     ia_1 INTEGER NULL,
     ia_2 INTEGER NULL,
     ia_3 INTEGER NULL,
-    ia_4 INTEGER NULL,
-		PRIMARY KEY(usn)
+    ia_4 INTEGER NULL
 );
 
 CREATE TABLE timetable_class(
@@ -41,7 +40,7 @@ CREATE TABLE subject(
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     department VARCHAR(255) NOT NULL,
-    sem INTEGER NOT NULL,
+    sem_id INTEGER NOT NULL,
     prof VARCHAR(255) NOT NULL,
 		PRIMARY KEY(code)
 );
@@ -65,13 +64,26 @@ ALTER TABLE
     student ADD CONSTRAINT student_current_sem_id_foreign FOREIGN KEY(current_sem_id) REFERENCES semester(id);
 ALTER TABLE
     student ADD CONSTRAINT student_department_foreign FOREIGN KEY(department) REFERENCES department(course);
+
 ALTER TABLE
     student_subject_info ADD CONSTRAINT student_subject_info_subject_foreign FOREIGN KEY(subject) REFERENCES subject(code);
 ALTER TABLE
-    student_subject_info ADD CONSTRAINT student_subject_info_sem_foreign FOREIGN KEY(sem) REFERENCES semester(id);
+    student_subject_info ADD CONSTRAINT student_subject_info_sem_foreign FOREIGN KEY(sem_id) REFERENCES semester(id);
+
+ALTER TABLE
+    student_subject_info ADD CONSTRAINT student_subject_info_department_foreign FOREIGN KEY(department) REFERENCES department(course);
+
 ALTER TABLE
     subject ADD CONSTRAINT subject_prof_foreign FOREIGN KEY(prof) REFERENCES faculty(id);
 ALTER TABLE
+		subject ADD CONSTRAINT subject_department_foreign FOREIGN KEY(department) REFERENCES department(course);
+ALTER TABLE
+		subject ADD CONSTRAINT subject_sem_foreign FOREIGN KEY(sem_id) REFERENCES semester(id);
+
+ALTER TABLE
     semester ADD CONSTRAINT semester_class_teacher_foreign FOREIGN KEY(class_teacher) REFERENCES faculty(id);
+ALTER TABLE
+		semester ADD CONSTRAINT semester_department_foreign FOREIGN KEY(department) REFERENCES department(course);
+
 ALTER TABLE
     department ADD CONSTRAINT department_hod_foreign FOREIGN KEY(hod) REFERENCES faculty(id);

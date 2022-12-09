@@ -15,7 +15,7 @@ const generate_faculty = () => {
 	return { id: faculty_id, name: faculty_name, role }
 }
 
-const generate_students = (sems) => {
+const generate_student = (sems) => {
 	const random_dep_index = faker.datatype.number({
 		'min': 0,
 		'max': deps.length - 1
@@ -23,13 +23,79 @@ const generate_students = (sems) => {
 	const usn = faker.helpers.regexpStyleStringParse(`1${faker.helpers.replaceSymbols('??')}[10-20]${deps[random_dep_index]}${faker.helpers.replaceSymbolWithNumber('###')}`)
 	const name = faker.name.fullName();
 	const department = deps[random_dep_index];
+	const related_sems = sems.filter(semester => semester.department === department)
 	const random_sem_index = faker.datatype.number({
 		'min': 0,
-		'max': sems.length - 1
+		'max': related_sems.length - 1
 	});
-	const current_sem_id = sems[random_sem_index].id;
+	const current_sem_id = related_sems[random_sem_index].id;
 	const phone = faker.phone.number('##########');
 	return { usn, name, department, current_sem_id, phone }
+}
+
+const generate_subjects = (semesters, faculties, subjects) => {
+	// for (course of departments) {
+	for (const semester of semesters) {
+		// for (let sem_number = 1; sem_number <= 8; sem_number++) {
+		for (let subject_number = 1; subject_number <= 6; subject_number++) {
+			let subject_code;
+			if (semester.sem > 6) {
+				subject_code = `17${semester.department}${semester.sem}${subject_number}`
+			}
+			else if (semester.sem > 2) {
+				subject_code = `18${semester.department}${semester.sem}${subject_number}`
+			}
+			else {
+				subject_code = `20${semester.department}${semester.sem}${subject_number}`
+			}
+			const subject_name = faker.lorem.word()
+			const subject_description = faker.lorem.sentence(5);
+			const department = semester.department;
+			const sem_id = semester.id;
+			const random_prof_idx = faker.datatype.number({
+				'min': 0,
+				'max': faculties.length - 1
+			});
+			const prof = faculties[random_prof_idx].id;
+			subjects.push({
+				code: subject_code,
+				name: subject_name,
+				description: subject_description,
+				department,
+				sem_id,
+				prof
+			});
+		}
+	}
+	// }
+	// }
+}
+
+const generate_students_subject_info = async (students, subjects, subject_infos) => {
+	for (const student of students) {
+		const related_subjects = subjects.filter(sub => sub.sem_id === student.current_sem_id)
+		if (related_subjects.length !== 0) {
+			for (const subject of related_subjects) {
+				const usn = student.usn;
+				const department = student.department;
+				const sem_id = student.current_sem_id;
+				const max_marks = 50;
+				const attendance = '85%';
+				const ia_1 = faker.datatype.number({ max: 50 })
+				const ia_2 = faker.datatype.number({ max: 50 })
+				subject_infos.push({
+					usn,
+					department,
+					subject: subject.code,
+					sem_id,
+					attendance,
+					max_marks,
+					ia_1,
+					ia_2
+				})
+			}
+		}
+	}
 }
 
 const mock_data = () => {
@@ -38,9 +104,11 @@ const mock_data = () => {
 	let faculties = [];
 	const semesters = [];
 	const students = []
+	const subjects = []
+	const student_subject_infos = [];
 
 	// creating normal faculty
-	for (let i = 0; i <= 70; i++) {
+	for (let i = 0; i <= 500; i++) {
 		const faculty = generate_faculty();
 		faculties.push(faculty);
 	}
@@ -76,11 +144,15 @@ const mock_data = () => {
 		}
 	}
 
-	for (let i = 0; i <= 500; i++) {
-		const student = generate_students(semesters);
+	for (let i = 0; i <= 15000; i++) {
+		const student = generate_student(semesters);
 		students.push(student)
 	}
-	return { dep_entries, faculties, students, semesters }
+	generate_subjects(semesters, faculties, subjects);
+	console.log(subjects[1]);
+	generate_students_subject_info(students, subjects, student_subject_infos);
+	console.log(student_subject_infos[1]);
+	return { dep_entries, faculties, students, semesters, subjects, student_subject_infos }
 }
 
 module.exports = mock_data

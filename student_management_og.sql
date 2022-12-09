@@ -3,7 +3,7 @@ CREATE TABLE "student"(
     "name" VARCHAR(255) NOT NULL,
     "department" VARCHAR(255) NOT NULL,
     "current_sem_id" INTEGER NOT NULL,
-    "phone" INTEGER NOT NULL
+    "phone" VARCHAR(255) NOT NULL
 );
 ALTER TABLE
     "student" ADD PRIMARY KEY("usn");
@@ -21,7 +21,7 @@ CREATE TABLE "student_subject_info"(
     "usn" VARCHAR(255) NOT NULL,
     "department" VARCHAR(255) NOT NULL,
     "subject" VARCHAR(255) NOT NULL,
-    "sem" INTEGER NOT NULL,
+    "sem_id" INTEGER NOT NULL,
     "attendance" VARCHAR(255) NOT NULL,
     "max_marks" INTEGER NOT NULL,
     "ia_1" INTEGER NULL,
@@ -29,8 +29,6 @@ CREATE TABLE "student_subject_info"(
     "ia_3" INTEGER NULL,
     "ia_4" INTEGER NULL
 );
-ALTER TABLE
-    "student_subject_info" ADD PRIMARY KEY("usn");
 CREATE TABLE "timetable_class"(
     "subject" VARCHAR(255) NOT NULL,
     "day_of_week" VARCHAR(255) NOT NULL,
@@ -44,7 +42,7 @@ CREATE TABLE "subject"(
     "name" VARCHAR(255) NOT NULL,
     "description" VARCHAR(255) NOT NULL,
     "department" VARCHAR(255) NOT NULL,
-    "sem" INTEGER NOT NULL,
+    "sem_id" INTEGER NOT NULL,
     "prof" VARCHAR(255) NOT NULL
 );
 ALTER TABLE
@@ -67,11 +65,21 @@ ALTER TABLE
 ALTER TABLE
     "student" ADD CONSTRAINT "student_current_sem_id_foreign" FOREIGN KEY("current_sem_id") REFERENCES "semester"("id");
 ALTER TABLE
+    "student_subject_info" ADD CONSTRAINT "student_subject_info_department_foreign" FOREIGN KEY("department") REFERENCES "department"("course");
+ALTER TABLE
+    "student_subject_info" ADD CONSTRAINT "student_subject_info_usn_foreign" FOREIGN KEY("usn") REFERENCES "student"("usn");
+ALTER TABLE
     "student_subject_info" ADD CONSTRAINT "student_subject_info_subject_foreign" FOREIGN KEY("subject") REFERENCES "subject"("code");
 ALTER TABLE
-    "student_subject_info" ADD CONSTRAINT "student_subject_info_sem_foreign" FOREIGN KEY("sem") REFERENCES "semester"("id");
+    "student_subject_info" ADD CONSTRAINT "student_subject_info_sem_id_foreign" FOREIGN KEY("sem_id") REFERENCES "semester"("id");
 ALTER TABLE
     "subject" ADD CONSTRAINT "subject_prof_foreign" FOREIGN KEY("prof") REFERENCES "faculty"("id");
+ALTER TABLE
+    "subject" ADD CONSTRAINT "subject_department_foreign" FOREIGN KEY("department") REFERENCES "department"("course");
+ALTER TABLE
+    "subject" ADD CONSTRAINT "subject_sem_id_foreign" FOREIGN KEY("sem_id") REFERENCES "semester"("id");
+ALTER TABLE
+    "semester" ADD CONSTRAINT "semester_department_foreign" FOREIGN KEY("department") REFERENCES "department"("course");
 ALTER TABLE
     "semester" ADD CONSTRAINT "semester_class_teacher_foreign" FOREIGN KEY("class_teacher") REFERENCES "faculty"("id");
 ALTER TABLE
