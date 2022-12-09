@@ -5,24 +5,10 @@ const sql = postgres('postgres://postgres:test@localhost:5432/postgres', {})
 
 const { dep_entries, faculties, students, semesters, subjects, student_subject_infos } = generate_mock_data();
 
-const clear_tables = async () => {
+const clear_and_setup_tables = async () => {
 	try {
-		await sql`DELETE FROM student`
-		console.log("yup");
-
-		await sql`DELETE FROM student_subject_info`
-		console.log("yup");
-
-		await sql`DELETE FROM subject`
-		console.log("yup");
-
-		await sql`DELETE FROM semester`
-		console.log("yup");
-
-		await sql`DELETE FROM department`
-		console.log("yup");
-
-		await sql`DELETE FROM faculty`
+		await sql`DROP TABLE student, student_subject_info, subject, semester, department, faculty, timetable_class`;
+		await sql.file('student_management.sql');
 		console.log("yup");
 	}
 	catch (err) {
@@ -67,8 +53,13 @@ const load_into_tables = async () => {
 
 (
 	async () => {
-		await clear_tables()
+		await clear_and_setup_tables()
 		await load_into_tables()
+		const res = await sql`select usn,student.name as name,student.department,faculty.name as hod,sem,phone from student
+inner join semester on student.current_sem_id=semester.id
+inner join department on semester.department=department.course
+inner join faculty on department.hod = faculty.id limit 10;`
+		console.log(res);
 		await sql.end()
 	}
 )()

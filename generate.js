@@ -149,9 +149,9 @@ const mock_data = () => {
 		students.push(student)
 	}
 	generate_subjects(semesters, faculties, subjects);
-	console.log(subjects[1]);
+	// console.log(subjects[1]);
 	generate_students_subject_info(students, subjects, student_subject_infos);
-	console.log(student_subject_infos[1]);
+	// console.log(student_subject_infos[1]);
 	return { dep_entries, faculties, students, semesters, subjects, student_subject_infos }
 }
 
