@@ -1,7 +1,8 @@
 const postgres = require('postgres');
+const { CONNECTION_STRING } = require('../config');
 const generate_mock_data = require('./generate');
 
-const sql = postgres('postgres://postgres:test@localhost:5432/postgres', {})
+const sql = postgres(CONNECTION_STRING, {})
 
 const { dep_entries, faculties, students, semesters, subjects, student_subject_infos } = generate_mock_data();
 
