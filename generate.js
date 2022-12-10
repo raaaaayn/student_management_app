@@ -12,25 +12,40 @@ const generate_faculty = () => {
 		'max': roles.length - 1
 	});
 	const role = roles[random_role_index];
-	return { id: faculty_id, name: faculty_name, role }
+	const phone = faker.phone.number('##########');
+	const email = null;
+	return { id: faculty_id, name: faculty_name, role, phone, email }
 }
 
-const generate_student = (sems) => {
-	const random_dep_index = faker.datatype.number({
-		'min': 0,
-		'max': deps.length - 1
-	});
-	const usn = faker.helpers.regexpStyleStringParse(`1${faker.helpers.replaceSymbols('??')}[10-20]${deps[random_dep_index]}${faker.helpers.replaceSymbolWithNumber('###')}`)
-	const name = faker.name.fullName();
-	const department = deps[random_dep_index];
-	const related_sems = sems.filter(semester => semester.department === department)
-	const random_sem_index = faker.datatype.number({
-		'min': 0,
-		'max': related_sems.length - 1
-	});
-	const current_sem_id = related_sems[random_sem_index].id;
-	const phone = faker.phone.number('##########');
-	return { usn, name, department, current_sem_id, phone }
+const generate_students = (sems, students) => {
+	for (const department of deps) {
+		const related_sems = sems.filter(semester => semester.department === department)
+		for (const semester of related_sems) {
+			for (let i = 1; i <= faker.datatype.number({ min: 500, max: 999 }); i++) {
+				const name = faker.name.fullName();
+				const usn = `1EE${semester.scheme}${department}${String(i).padStart(3, '0')}`;
+				const current_sem_id = semester.id;
+				const phone = faker.phone.number('##########');
+				students.push({ usn, name, department, current_sem_id, phone })
+			}
+		}
+	}
+	// const random_dep_index = faker.datatype.number({
+	// 	'min': 0,
+	// 	'max': deps.length - 1
+	// });
+	// const name = faker.name.fullName();
+	// const department = deps[random_dep_index];
+	// const usn = faker.helpers.unique(faker.helpers.regexpStyleStringParse, [`1EE[15-20]${department}${faker.helpers.replaceSymbolWithNumber('###')}`], { maxRetries: 10000 })
+	// const related_sems = sems.filter(semester => semester.department === department)
+	// const random_sem_index = faker.datatype.number({
+	// 	'min': 0,
+	// 	'max': related_sems.length - 1
+	// });
+	// const semester = related_sems[random_sem_index]
+	// const current_sem_id = semester.id;
+	// const phone = faker.phone.number('##########');
+	// return { usn, name, department, current_sem_id, phone }
 }
 
 const generate_subjects = (semesters, faculties, subjects) => {
@@ -118,7 +133,8 @@ const mock_data = () => {
 		const hod_id = faker.helpers.unique(faker.random.alphaNumeric, [7], { maxRetries: 200 })
 		const name = faker.name.fullName();
 		const role = "HOD";
-		const hod = { id: hod_id, name, role }
+		const phone = faker.phone.number('##########');
+		const hod = { id: hod_id, name, role, phone }
 		hods.push(hod)
 
 		const dep_course = dep;
@@ -140,14 +156,17 @@ const mock_data = () => {
 				'max': faculties_wo_others.length - 1
 			});
 			const class_teacher = faculties_wo_others[random_faculty_index].id;
-			semesters.push({ id: sem_id, department, sem: sem_number, class_teacher })
+			const scheme = `${25 - sem_number}`;
+			semesters.push({ id: sem_id, department, sem: sem_number, class_teacher, scheme })
 		}
 	}
 
-	for (let i = 0; i <= 15000; i++) {
-		const student = generate_student(semesters);
-		students.push(student)
-	}
+	// for (let i = 0; i <= 15000; i++) {
+	// const student = generate_students(semesters);
+	generate_students(semesters, students);
+	console.log(students[0]);
+	// students.push(student)
+	// }
 	generate_subjects(semesters, faculties, subjects);
 	// console.log(subjects[1]);
 	generate_students_subject_info(students, subjects, student_subject_infos);

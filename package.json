@@ -3,6 +3,7 @@
     "@faker-js/faker": "^7.6.0"
   },
   "dependencies": {
+    "fastify": "^4.10.2",
     "postgres": "^3.3.2"
   }
 }

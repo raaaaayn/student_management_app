@@ -11,6 +11,8 @@ CREATE TABLE faculty(
     id VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL,
+    phone VARCHAR(13) NOT NULL,
+		email VARCHAR(255) NULL,
 		PRIMARY KEY(id)
 );
 
@@ -32,7 +34,7 @@ CREATE TABLE timetable_class(
     day_of_week VARCHAR(255) NOT NULL,
     time_start TIME(0) WITHOUT TIME ZONE NOT NULL,
     time_end TIME(0) WITHOUT TIME ZONE NOT NULL,
-		PRIMARY KEY(subject)
+		sem_id INT NOT NULL
 );
 
 CREATE TABLE subject(
@@ -50,6 +52,7 @@ CREATE TABLE semester(
     department VARCHAR(255) NOT NULL,
     sem INTEGER NOT NULL,
     class_teacher VARCHAR(255) NOT NULL,
+		scheme VARCHAR(255) NOT NULL,
 		PRIMARY KEY(id)
 );
 
@@ -87,3 +90,8 @@ ALTER TABLE
 
 ALTER TABLE
     department ADD CONSTRAINT department_hod_foreign FOREIGN KEY(hod) REFERENCES faculty(id);
+	
+ALTER TABLE
+		timetable_class ADD CONSTRAINT timetable_class_sem_id_foreign FOREIGN KEY(sem_id) REFERENCES semester(id);
+ALTER TABLE
+		timetable_class ADD CONSTRAINT timetable_class_subject_foreign FOREIGN KEY(subject) REFERENCES subject(code);

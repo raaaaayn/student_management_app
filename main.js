@@ -8,6 +8,7 @@ const { dep_entries, faculties, students, semesters, subjects, student_subject_i
 const clear_and_setup_tables = async () => {
 	try {
 		await sql`DROP TABLE student, student_subject_info, subject, semester, department, faculty, timetable_class`;
+		console.log("yup");
 		await sql.file('student_management.sql');
 		console.log("yup");
 	}
@@ -19,13 +20,13 @@ const clear_and_setup_tables = async () => {
 
 const load_into_tables = async () => {
 	try {
-		await sql`INSERT INTO faculty ${sql(faculties, 'id', 'name', 'role')}`
+		await sql`INSERT INTO faculty ${sql(faculties, 'id', 'name', 'role', 'phone')}`
 		console.log("yup");
 
 		await sql`INSERT INTO department ${sql(dep_entries, 'course', 'hod', 'name')}`
 		console.log("yup");
 
-		await sql`INSERT INTO semester ${sql(semesters, 'id', 'department', 'sem', 'class_teacher')}`
+		await sql`INSERT INTO semester ${sql(semesters, 'id', 'department', 'sem', 'class_teacher', 'scheme')}`
 		console.log("yup");
 
 		const chunkSize = 5000;
@@ -44,6 +45,8 @@ const load_into_tables = async () => {
 		}
 		console.log("yup");
 
+		// await sql`insert into timetable_class values('18CS51','monday','08:00:00','08:50:00',3097)`;
+
 	}
 	catch (err) {
 		console.error("nope")
@@ -55,11 +58,11 @@ const load_into_tables = async () => {
 	async () => {
 		await clear_and_setup_tables()
 		await load_into_tables()
-		const res = await sql`select usn,student.name as name,student.department,faculty.name as hod,sem,phone from student
-inner join semester on student.current_sem_id=semester.id
-inner join department on semester.department=department.course
-inner join faculty on department.hod = faculty.id limit 10;`
-		console.log(res);
+		// const res = await sql`select usn,student.name as name,student.department,faculty.name as hod,sem,phone from student
+		// inner join semester on student.current_sem_id=semester.id
+		// inner join department on semester.department=department.course
+		// inner join faculty on department.hod = faculty.id limit 10;`
+		// console.log(res);
 		await sql.end()
 	}
 )()
