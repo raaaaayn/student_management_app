@@ -1,7 +1,12 @@
 {
+  "scripts": {
+    "dev": "npx nodemon -r dotenv/config server.js"
+  },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "eslint": "^8.29.0",
+    "prettier": "^2.8.1"
   },
   "dependencies": {
     "fastify": "^4.10.2",
