@@ -13,7 +13,9 @@ ON COLUMN
 CREATE TABLE "faculty"(
     "id" VARCHAR(255) NOT NULL,
     "name" VARCHAR(255) NOT NULL,
-    "role" VARCHAR(255) NOT NULL
+    "role" VARCHAR(255) NOT NULL,
+    "phone" VARCHAR(255) NOT NULL,
+    "email" VARCHAR(255) NULL
 );
 ALTER TABLE
     "faculty" ADD PRIMARY KEY("id");
@@ -51,7 +53,8 @@ CREATE TABLE "semester"(
     "id" INTEGER NOT NULL,
     "department" VARCHAR(255) NOT NULL,
     "sem" INTEGER NOT NULL,
-    "class_teacher" VARCHAR(255) NOT NULL
+    "class_teacher" VARCHAR(255) NOT NULL,
+    "scheme" VARCHAR(255) NOT NULL
 );
 ALTER TABLE
     "semester" ADD PRIMARY KEY("id");
@@ -62,6 +65,12 @@ CREATE TABLE "department"(
 );
 ALTER TABLE
     "department" ADD PRIMARY KEY("course");
+CREATE TABLE "password_hashes"(
+    "hash" VARCHAR(255) NOT NULL,
+    "user" VARCHAR(255) NOT NULL
+);
+ALTER TABLE
+    "student" ADD CONSTRAINT "student_department_foreign" FOREIGN KEY("department") REFERENCES "department"("course");
 ALTER TABLE
     "student" ADD CONSTRAINT "student_current_sem_id_foreign" FOREIGN KEY("current_sem_id") REFERENCES "semester"("id");
 ALTER TABLE
@@ -84,3 +93,7 @@ ALTER TABLE
     "semester" ADD CONSTRAINT "semester_class_teacher_foreign" FOREIGN KEY("class_teacher") REFERENCES "faculty"("id");
 ALTER TABLE
     "department" ADD CONSTRAINT "department_hod_foreign" FOREIGN KEY("hod") REFERENCES "faculty"("id");
+ALTER TABLE
+    "password_hashes" ADD CONSTRAINT "password_hashes_user_foreign" FOREIGN KEY("user") REFERENCES "student"("usn");
+ALTER TABLE
+    "password_hashes" ADD CONSTRAINT "password_hashes_user_foreign" FOREIGN KEY("user") REFERENCES "faculty"("id");

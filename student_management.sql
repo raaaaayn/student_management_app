@@ -63,6 +63,11 @@ CREATE TABLE department(
 		PRIMARY KEY(course)
 );
 
+CREATE TABLE password_hashes(
+    "user" VARCHAR(255) NOT NULL,
+    hash VARCHAR(255) NOT NULL
+);
+
 ALTER TABLE
     student ADD CONSTRAINT student_current_sem_id_foreign FOREIGN KEY(current_sem_id) REFERENCES semester(id);
 ALTER TABLE
@@ -95,3 +100,5 @@ ALTER TABLE
 		timetable_class ADD CONSTRAINT timetable_class_sem_id_foreign FOREIGN KEY(sem_id) REFERENCES semester(id);
 ALTER TABLE
 		timetable_class ADD CONSTRAINT timetable_class_subject_foreign FOREIGN KEY(subject) REFERENCES subject(code);
+
+ALTER table password_hashes add constraint unique_password_user UNIQUE("user");
