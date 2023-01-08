@@ -1,0 +1,36 @@
+http://localhost:3001
+GET /search?q=1ee20cs
+
+http://localhost:3001
+GET /student/1EE20cs046
+
+http://localhost:3001
+GET /student/1EE20cs046/results
+
+http://localhost:3001
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiMWVlMjBjczA0NiIsImlhdCI6MTY3MjAwMzU3Mn0.4-qSda98W21lkeK9HLhY4FffEbaxgT4UrYnlPLlcEY8
+POST /student/new
+{
+	"name":"Rayyan Siraj Malik",
+	"usn":"1ee20cs046",
+	"department":"cs",
+	"sem":5,
+	"phone":"9620945569"
+}
+
+http://localhost:3001
+GET /stats
+
+http://localhost:3001
+POST /register
+{
+	"usn":"1ee20cs046",
+	"password":"abcdefgh"
+}
+
+http://localhost:3001
+POST /login
+{
+	"usn":"1ee20cs046",
+	"password":"abcdefgh"
+}

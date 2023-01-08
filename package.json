@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "npx nodemon -r dotenv/config server.js"
+    "dev": "npx nodemon -r dotenv/config server.js",
+    "generate": "node -r dotenv/config mock_data/main.js"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

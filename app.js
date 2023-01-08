@@ -1,6 +1,5 @@
 // Require the framework and instantiate it
 const fastify = require("fastify");
-const sql = require("./db");
 
 const search = require("./routes/search");
 const usn = require("./routes/usn");
@@ -13,9 +12,9 @@ const build_app = (opts = {}) => {
   app.register(login, { prefix: "/login" });
   app.register(register, { prefix: "/register" });
   app.register(search, { prefix: "/search" });
-  app.register(usn, { prefix: "/usn" });
   app.register(stats, { prefix: "/stats" });
-  app.register(new_student, { prefix: "/new_student" });
+  app.register(usn, { prefix: "/student" });
+  app.register(new_student, { prefix: "/student/new" });
   return app;
 };
 

@@ -84,37 +84,34 @@ const generate_students = (sems, students) => {
 };
 
 const generate_subjects = (semesters, faculties, subjects) => {
-  // for (course of departments) {
-  for (const semester of semesters) {
-    // for (let sem_number = 1; sem_number <= 8; sem_number++) {
-    for (let subject_number = 1; subject_number <= 6; subject_number++) {
-      let subject_code;
-      if (semester.sem > 6) {
-        subject_code = `17${semester.department}${semester.sem}${subject_number}`;
-      } else if (semester.sem > 2) {
-        subject_code = `18${semester.department}${semester.sem}${subject_number}`;
-      } else {
-        subject_code = `20${semester.department}${semester.sem}${subject_number}`;
+  const schemes = ["17", "18", "20"];
+  for (const scheme of schemes) {
+    for (const semester of semesters) {
+      // for (let sem_number = 1; sem_number <= 8; sem_number++) {
+      for (let subject_number = 1; subject_number <= 6; subject_number++) {
+        const subject_code = `${scheme}${semester.department}${semester.sem}${subject_number}`;
+        const subject_name = faker.lorem.word();
+        const subject_description = faker.lorem.sentence(5);
+        const department = semester.department;
+        const sem_id = semester.id;
+        const random_prof_idx = faker.datatype.number({
+          min: 0,
+          max: faculties.length - 1,
+        });
+        const prof = faculties[random_prof_idx].id;
+        subjects.push({
+          code: subject_code,
+          name: subject_name,
+          description: subject_description,
+          department,
+          sem_id,
+          prof,
+        });
       }
-      const subject_name = faker.lorem.word();
-      const subject_description = faker.lorem.sentence(5);
-      const department = semester.department;
-      const sem_id = semester.id;
-      const random_prof_idx = faker.datatype.number({
-        min: 0,
-        max: faculties.length - 1,
-      });
-      const prof = faculties[random_prof_idx].id;
-      subjects.push({
-        code: subject_code,
-        name: subject_name,
-        description: subject_description,
-        department,
-        sem_id,
-        prof,
-      });
     }
   }
+  // for (course of departments) {
+
   // }
   // }
 };
@@ -123,30 +120,41 @@ const generate_students_subject_info = async (
   students,
   subjects,
   subject_infos,
+  semesters,
 ) => {
   for (const student of students) {
-    const related_subjects = subjects.filter(
-      (sub) => sub.sem_id === student.current_sem_id,
+    const current_semester = semesters.find(
+      (semester) => semester.id === student.current_sem_id,
     );
-    if (related_subjects.length !== 0) {
-      for (const subject of related_subjects) {
-        const usn = student.usn;
-        const department = student.department;
-        const sem_id = student.current_sem_id;
-        const max_marks = 50;
-        const attendance = "85%";
-        const ia_1 = faker.datatype.number({ max: 50 });
-        const ia_2 = faker.datatype.number({ max: 50 });
-        subject_infos.push({
-          usn,
-          department,
-          subject: subject.code,
-          sem_id,
-          attendance,
-          max_marks,
-          ia_1,
-          ia_2,
-        });
+    const related_sems = semesters.filter(
+      (semester) => semester.department === student.department,
+    );
+    for (const semester of related_sems) {
+      if (semester.sem <= current_semester.sem) {
+        const related_subjects = subjects.filter(
+          (sub) => sub.sem_id === semester.id,
+        );
+        if (related_subjects.length !== 0) {
+          for (const subject of related_subjects) {
+            const usn = student.usn;
+            const department = student.department;
+            const sem_id = semester.id;
+            const max_marks = 50;
+            const attendance = "85%";
+            const ia_1 = faker.datatype.number({ max: 50 });
+            const ia_2 = faker.datatype.number({ max: 50 });
+            subject_infos.push({
+              usn,
+              department,
+              subject: subject.code,
+              sem_id,
+              attendance,
+              max_marks,
+              ia_1,
+              ia_2,
+            });
+          }
+        }
       }
     }
   }
@@ -219,7 +227,12 @@ const mock_data = () => {
   // }
   generate_subjects(semesters, faculties, subjects);
   // console.log(subjects[1]);
-  generate_students_subject_info(students, subjects, student_subject_infos);
+  generate_students_subject_info(
+    students,
+    subjects,
+    student_subject_infos,
+    semesters,
+  );
   // console.log(student_subject_infos[1]);
   return {
     dep_entries,

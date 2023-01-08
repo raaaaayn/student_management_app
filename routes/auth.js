@@ -16,23 +16,32 @@ const register = (fastify, opts, next) => {
         password: { type: "string" },
       },
     },
-    handler: async (req, res) => {
+    handler: async (req, reply) => {
       const { usn, password } = req.body;
       const hash = await bcrypt.hash(password, saltRounds);
-      console.log({ hash });
-      // TODO: even users that are not in student or faculty table can register themselves, fix that by adding foreign key constraints and multiple fields to reference either student or faculty
-      await sql`
+      try {
+        // TODO: even users that are not in student or faculty table can register themselves, fix that by adding foreign key constraints and multiple fields to reference either student or faculty
+        await sql`
 				insert into password_hashes
 					("user", hash)
 				values
 					(UPPER(${usn}), ${hash})
 			`;
-      jwt.sign({ user: usn }, JWT_SECRET, function (err, token) {
-        res.send({ token });
-        if (err) {
-          res.send(500);
-        }
-      });
+        jwt.sign({ user: usn }, JWT_SECRET, async function (err, token) {
+          await reply.send({ token });
+          if (err) {
+            await reply.send(500);
+          }
+        });
+      } catch (err) {
+        if (
+          err.message ===
+          'duplicate key value violates unique constraint "unique_password_user"'
+        )
+          await reply.code(400).send("user exists");
+        throw err;
+      }
+      return reply;
     },
   });
   next();

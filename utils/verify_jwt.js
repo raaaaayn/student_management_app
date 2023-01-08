@@ -9,7 +9,7 @@ const verify_jwt = async (request, reply, payload) => {
   }
   jwt.verify(token, JWT_SECRET, async (err, res) => {
     if (err) {
-      await reply.code(401).send("Token expired, please obtain a new token");
+      await reply.code(401).send("Invalid Token, please obtain a new token");
       return;
     }
     console.log({ res });

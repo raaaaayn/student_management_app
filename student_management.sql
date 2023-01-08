@@ -77,9 +77,9 @@ ALTER TABLE
     student_subject_info ADD CONSTRAINT student_subject_info_subject_foreign FOREIGN KEY(subject) REFERENCES subject(code);
 ALTER TABLE
     student_subject_info ADD CONSTRAINT student_subject_info_sem_foreign FOREIGN KEY(sem_id) REFERENCES semester(id);
-
 ALTER TABLE
     student_subject_info ADD CONSTRAINT student_subject_info_department_foreign FOREIGN KEY(department) REFERENCES department(course);
+CREATE INDEX usn_idx ON student_subject_info(usn);
 
 ALTER TABLE
     subject ADD CONSTRAINT subject_prof_foreign FOREIGN KEY(prof) REFERENCES faculty(id);
